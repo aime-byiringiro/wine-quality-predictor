@@ -22,17 +22,56 @@ dataset <- na.omit(dataset, cols =
                      "Gender")
 
 
-dataset$Survived2= dataset$Survived^2 # Survived is an independent variable 
 
-
+dataset$Speed2 = dataset$Speed_of_Impact^2
+dataset$Speed3 = dataset$Speed_of_Impact^3
 
 
 # building regressor 
 
-regressor = lm(formula = Age ~ ., 
+regressor1 = lm(formula = Survived ~ ., 
                data = dataset)
 
 summary(regressor)
+
+
+regressor2 = lm(formula = Survived ~ Age + Gender + Speed_of_Impact + Helmet_Used + Seatbelt_Used + Speed2 +Speed3, 
+               data = dataset)
+
+summary(regressor2)
+
+regressor3= lm(formula = Survived ~ Age + Gender + Speed_of_Impact + Helmet_Used + Seatbelt_Used + Speed2, 
+                data = dataset)
+
+summary(regressor3)
+
+regressor4 = lm(formula = Survived ~ Age + Gender + Speed_of_Impact + Helmet_Used + Seatbelt_Used, 
+               data = dataset)
+
+summary(regressor4)
+
+#The remaining are categorical and age is the closed to 0.05 thought it's 0.06
+
+regressor5 = lm(formula = Survived ~ Age + Gender + Helmet_Used + Seatbelt_Used, 
+                data = dataset)
+
+summary(regressor5)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
