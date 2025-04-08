@@ -58,6 +58,14 @@ regressor5 = lm(formula = Survived ~ Age + Gender + Helmet_Used + Seatbelt_Used,
 summary(regressor5)
 
 
+# how about logistic regression
+#regressor6 = glm(formula = Survived ~ Age + Gender + Helmet_Used + Seatbelt_Used, 
+#               data = dataset,
+#               family = binomial)
+
+#summary(regressor6)
+
+
 
 
 
