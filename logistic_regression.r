@@ -21,3 +21,34 @@ dataset$Speed_of_Impact = ifelse(is.na(dataset$Speed_of_Impact),
 dataset <- na.omit(dataset, cols = 
                      "Gender")
 
+
+
+#Splitting the dataset inot the training set and test set
+library(caTools)
+set.seed(123)
+split = sample.split(dataset$Survived, SplitRatio = 0.75)
+training_set = subset(dataset, split == TRUE)
+test_set = subset(dataset, split == FALSE)
+
+
+#Feature scaling
+training_scaled_cols = scale(training_set[, 1:2])
+training_set[, 1:2] = training_scaled_cols
+test_set[, 1:2] = scale(test_set[, 1:2],
+                        center = attr(training_scaled_cols, 'scaled:center'),,
+                        scale = attr(training_scaled_cols, 'scaled:scale'))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
