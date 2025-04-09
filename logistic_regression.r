@@ -51,7 +51,8 @@ test_set = scale(test_set,
                         center = attr(training_scaled_cols, 'scaled:center'),,
                         scale = attr(training_scaled_cols, 'scaled:scale'))
 
-
+#Error in scale(test_set, center = attr(training_scaled_cols, "scaled:center"),  : 
+                 #unused argument (alist())
 
 
 
