@@ -1,1 +1,1 @@
-# car-crash-survivor-predictor
+# wine-quality-predictor
