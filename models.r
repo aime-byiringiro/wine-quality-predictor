@@ -20,7 +20,7 @@ test_set[, 1:11] = scale(test_set[, 1:11],
 
 # MODELS
 
-# KNN
+### KNN ###
 library(kknn)
 
 # Fitting k-NN to the Training set and Predicting the Test set results
@@ -35,9 +35,7 @@ print(cm$table)
 print(cm$overall['Accuracy'])
 
 
-# LOGISTIC REGRESSION
-
-
+### LOGISTIC REGRESSION ###
 # Fitting Logistic Regression to the Training set
 classifier = glm(formula = quality ~ .,
                  family = binomial,
@@ -54,4 +52,18 @@ print(cm$table)
 print(cm$overall['Accuracy'])
 
 
+### SVM ###
+library(e1071)
+classifier = svm(formula = quality ~ .,
+                 data = training_set,
+                 type = 'C-classification',
+                 kernel = 'linear')
 
+# Predicting the Test set results
+y_pred = predict(classifier, newdata = test_set)
+
+# Showing the Confusion Matrix and Accuracy
+library(caret)
+cm = confusionMatrix(y_pred, test_set$quality)
+print(cm$table)
+print(cm$overall['Accuracy'])
