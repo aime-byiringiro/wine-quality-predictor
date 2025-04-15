@@ -20,6 +20,92 @@ test_set[, 1:11] = scale(test_set[, 1:11],
 
 # MODELS
 
+
+
+### LOGISTIC REGRESSION ###
+# Fitting Logistic Regression to the Training set
+classifier = glm(formula = quality ~ .,
+                 family = binomial,
+                 data = training_set)
+
+
+
+summary(classifier)
+
+
+#remove denisty
+classifier = glm(formula = quality ~ fixed.acidity + volatile.acidity +  citric.acid + residual.sugar + 
+                   chlorides + free.sulfur.dioxide + total.sulfur.dioxide + pH + sulphates + alcohol,
+                 family = binomial,
+                 data = training_set)
+
+summary(classifier)
+
+#remove fixed acidity 
+
+classifier = glm(formula = quality ~  volatile.acidity +  citric.acid + residual.sugar + chlorides + free.sulfur.dioxide + 
+                   total.sulfur.dioxide +  pH + sulphates + alcohol,
+                 family = binomial,
+                 data = training_set)
+
+summary(classifier)
+
+
+#remove citric acid
+classifier = glm(formula = quality ~ volatile.acidity + residual.sugar + chlorides + free.sulfur.dioxide + 
+                   total.sulfur.dioxide + pH + sulphates + alcohol,
+                 family = binomial,
+                 data = training_set)
+
+summary(classifier)
+
+#remove residual sugar
+classifier = glm(formula = quality ~  volatile.acidity +  chlorides + free.sulfur.dioxide + total.sulfur.dioxide + 
+                   pH + sulphates + alcohol,
+                 family = binomial,
+                 data = training_set)
+
+summary(classifier)
+
+
+#remove ph
+classifier = glm(formula = quality ~  volatile.acidity +  chlorides + free.sulfur.dioxide + total.sulfur.dioxide + 
+                   sulphates + alcohol,
+                 family = binomial,
+                 data = training_set)
+
+summary(classifier)
+
+
+# The final featuers are: volatile.acidity, chlorides, free.sulfur.dioxide, total.sulfur.dioxide, sulphates, alcohol
+
+
+
+
+
+# Predicting the Test set results
+prob_pred = predict(classifier, type = 'response', newdata = test_set)
+y_pred = as.factor(ifelse(prob_pred > 0.5, 1, 0))
+
+# Showing the Confusion Matrix and Accuracy
+library(caret)
+cm = confusionMatrix(y_pred, test_set$quality)
+print(cm$table)
+print(cm$overall['Accuracy'])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### KNN ###
 library(kknn)
 
@@ -35,21 +121,6 @@ print(cm$table)
 print(cm$overall['Accuracy'])
 
 
-### LOGISTIC REGRESSION ###
-# Fitting Logistic Regression to the Training set
-classifier = glm(formula = quality ~ .,
-                 family = binomial,
-                 data = training_set)
-
-# Predicting the Test set results
-prob_pred = predict(classifier, type = 'response', newdata = test_set)
-y_pred = as.factor(ifelse(prob_pred > 0.5, 1, 0))
-
-# Showing the Confusion Matrix and Accuracy
-library(caret)
-cm = confusionMatrix(y_pred, test_set$quality)
-print(cm$table)
-print(cm$overall['Accuracy'])
 
 
 ### SVM ###
