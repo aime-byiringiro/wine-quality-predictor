@@ -35,4 +35,23 @@ print(cm$table)
 print(cm$overall['Accuracy'])
 
 
+# LOGISTIC REGRESSION
+
+
+# Fitting Logistic Regression to the Training set
+classifier = glm(formula = quality ~ .,
+                 family = binomial,
+                 data = training_set)
+
+# Predicting the Test set results
+prob_pred = predict(classifier, type = 'response', newdata = test_set)
+y_pred = as.factor(ifelse(prob_pred > 0.5, 1, 0))
+
+# Showing the Confusion Matrix and Accuracy
+library(caret)
+cm = confusionMatrix(y_pred, test_set$quality)
+print(cm$table)
+print(cm$overall['Accuracy'])
+
+
 
