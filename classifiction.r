@@ -26,17 +26,31 @@ print(r2_adjusted)
 
 
 
-# Logistic Regression 
-
-training_set = scale(training_set)
-test_set= scale(test_set, center = attr(training_set, 'scaled:center'),
-                                scale = attr(training_set, 'scaled:scale'))
+######################################################################################
+        #POLYNOMIAL
+#####################################################################################
 
 
 
+dataset = read.csv('winequality.csv')
 
+#free sulfur dioxide
+#ph 
+# the above variables increase as the degree increase 
 
-classifier = glm(formula = quality ~ .,
-                 family = binomial,
-                 data.frame = training_set)
+regressor = lm(formula = quality ~ .,
+               data = dataset)
 
+summary(regressor)
+
+dataset$quality = dataset$quality^2
+regressor = lm(formula = quality ~ ., 
+               data = dataset)
+
+summary(regressor)
+
+dataset$quality = dataset$quality^3
+regressor = lm(formula = quality ~ ., 
+               data = dataset)
+
+summary(regressor)
