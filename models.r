@@ -23,52 +23,39 @@ classifier = glm(formula = quality ~ .,
                  family = binomial,
                  data = training_set)
 summary(classifier)
-
-
-#remove density
+# remove density
 classifier = glm(formula = quality ~ fixed.acidity + volatile.acidity +  citric.acid + residual.sugar + 
                    chlorides + free.sulfur.dioxide + total.sulfur.dioxide + pH + sulphates + alcohol,
                  family = binomial,
                  data = training_set)
 summary(classifier)
-
-#remove fixed acidity 
-
+# remove fixed acidity 
 classifier = glm(formula = quality ~  volatile.acidity +  citric.acid + residual.sugar + chlorides + free.sulfur.dioxide + 
                    total.sulfur.dioxide +  pH + sulphates + alcohol,
                  family = binomial,
                  data = training_set)
 summary(classifier)
-
-
-#remove citric acid
+# remove citric acid
 classifier = glm(formula = quality ~ volatile.acidity + residual.sugar + chlorides + free.sulfur.dioxide + 
                    total.sulfur.dioxide + pH + sulphates + alcohol,
                  family = binomial,
                  data = training_set)
 summary(classifier)
-
-#remove residual sugar
+# remove residual sugar
 classifier = glm(formula = quality ~  volatile.acidity +  chlorides + free.sulfur.dioxide + total.sulfur.dioxide + 
                    pH + sulphates + alcohol,
                  family = binomial,
                  data = training_set)
 summary(classifier)
-
-
-#remove ph
+# remove ph
 classifier = glm(formula = quality ~  volatile.acidity +  chlorides + free.sulfur.dioxide + total.sulfur.dioxide + 
                    sulphates + alcohol,
                  family = binomial,
                  data = training_set)
 summary(classifier)
-
-
 # The final features are: volatile.acidity, chlorides, free.sulfur.dioxide, total.sulfur.dioxide, sulphates, alcohol
 
-
 # MODELS
-
 ### LOGISTIC REGRESSION ###
 # Fitting Logistic Regression to the Training set
 
@@ -81,7 +68,6 @@ library(caret)
 cm = confusionMatrix(y_pred, test_set$quality)
 print(cm$table)
 print(cm$overall['Accuracy'])
-
 
 ### KNN ###
 library(kknn)
@@ -133,16 +119,44 @@ points(set, pch = 21, bg = c('red3', 'green4')[set$quality])
 
 ### SVM ###
 library(e1071)
-classifier = svm(formula = quality ~ .,
-                 data = training_set,
-                 type = 'C-classification',
-                 kernel = 'linear')
+classifier_svm = svm(formula = quality ~ chlorides + alcohol,
+                     data = training_set,
+                     type = 'C-classification',
+                     kernel = 'radial')
 
 # Predicting the Test set results
-y_pred = predict(classifier, newdata = test_set)
+y_pred = predict(classifier_svm, newdata = test_set[, c('chlorides', 'alcohol')])
 
 # Showing the Confusion Matrix and Accuracy
 library(caret)
-cm = confusionMatrix(y_pred, test_set$quality)
-print(cm$table)
-print(cm$overall['Accuracy'])
+cm_svm = confusionMatrix(y_pred, test_set$quality)
+print(cm_svm$table)
+print(cm_svm$overall['Accuracy'])
+
+# Visualizing the Training set results
+set = training_set
+X1 = seq(min(set$chlorides) - 1, max(set$chlorides) + 1, by = 0.01)
+X2 = seq(min(set$alcohol) - 1, max(set$alcohol) + 1, by = 0.01)
+grid_set = expand.grid(X1, X2)
+colnames(grid_set) = c('chlorides', 'alcohol')
+y_grid = predict(classifier_svm, newdata = grid_set[, c('chlorides', 'alcohol')])
+plot(NULL,
+     main = 'Kernel SVM (Training set)',
+     xlab = 'Chlorides (Scaled)', ylab = 'Alcohol (Scaled)',
+     xlim = range(X1), ylim = range(X2))
+points(grid_set, pch = 20, col = c('tomato', 'springgreen3')[y_grid])
+points(set, pch = 21, bg = c('red3', 'green4')[set$quality])
+
+# Visualizing the Test set results
+set = test_set
+X1 = seq(min(set$chlorides) - 1, max(set$chlorides) + 1, by = 0.01)
+X2 = seq(min(set$alcohol) - 1, max(set$alcohol) + 1, by = 0.01)
+grid_set = expand.grid(X1, X2)
+colnames(grid_set) = c('chlorides', 'alcohol')
+y_grid = predict(classifier_svm, newdata = grid_set[, c('chlorides', 'alcohol')])
+plot(NULL,
+     main = 'Kernel SVM (Test set)',
+     xlab = 'Chlorides (Scaled)', ylab = 'Alcohol (Scaled)',
+     xlim = range(X1), ylim = range(X2))
+points(grid_set, pch = 20, col = c('tomato', 'springgreen3')[y_grid])
+points(set, pch = 21, bg = c('red3', 'green4')[set$quality])
