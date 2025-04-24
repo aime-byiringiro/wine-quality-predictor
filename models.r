@@ -146,13 +146,16 @@ points(set[, c("volatile.acidity", "alcohol")],
 
 ### SVM ###
 library(e1071)
-classifier_svm = svm(formula = quality ~ chlorides + alcohol,
+classifier_svm = svm(formula = quality ~ volatile.acidity +  chlorides + 
+                       free.sulfur.dioxide + total.sulfur.dioxide + 
+                       sulphates + alcohol,
                      data = training_set,
                      type = 'C-classification',
                      kernel = 'radial')
 
 # Predicting the Test set results
-y_pred = predict(classifier_svm, newdata = test_set[, c('chlorides', 'alcohol')])
+y_pred = predict(classifier_svm, newdata = test_set[, c('volatile.acidity', 'chlorides', 'free.sulfur.dioxide', 
+                                                        'total.sulfur.dioxide', 'sulphates', 'alcohol')])
 
 # Showing the Confusion Matrix and Accuracy
 library(caret)
@@ -160,30 +163,42 @@ cm_svm = confusionMatrix(y_pred, test_set$quality)
 print(cm_svm$table)
 print(cm_svm$overall['Accuracy'])
 
-# Visualizing the Training set results
+# Visualizing the Training set results (volatile acidity and alcohol)
 set = training_set
-X1 = seq(min(set$chlorides) - 1, max(set$chlorides) + 1, by = 0.01)
+X1 = seq(min(set$volatile.acidity) - 1, max(set$volatile.acidity) + 1, by = 0.01)
 X2 = seq(min(set$alcohol) - 1, max(set$alcohol) + 1, by = 0.01)
-grid_set = expand.grid(X1, X2)
-colnames(grid_set) = c('chlorides', 'alcohol')
-y_grid = predict(classifier_svm, newdata = grid_set[, c('chlorides', 'alcohol')])
+
+grid_set = expand.grid(volatile.acidity = X1, alcohol = X2)
+grid_set$chlorides = mean(training_set$chlorides)
+grid_set$free.sulfur.dioxide = mean(training_set$free.sulfur.dioxide)
+grid_set$total.sulfur.dioxide = mean(training_set$total.sulfur.dioxide)
+grid_set$sulphates = mean(training_set$sulphates)
+
+# colnames(grid_set) = c('volatile.acidity', 'alcohol')
+y_grid = predict(classifier_svm, newdata = grid_set)
 plot(NULL,
      main = 'Kernel SVM (Training set)',
-     xlab = 'Chlorides (Scaled)', ylab = 'Alcohol (Scaled)',
+     xlab = 'Volatile Acidity (Scaled)', ylab = 'Alcohol (Scaled)',
      xlim = range(X1), ylim = range(X2))
 points(grid_set, pch = 20, col = c('tomato', 'springgreen3')[y_grid])
 points(set, pch = 21, bg = c('red3', 'green4')[set$quality])
 
-# Visualizing the Test set results
+# Visualizing the Test set results (volatile acidity and alcohol)
 set = test_set
-X1 = seq(min(set$chlorides) - 1, max(set$chlorides) + 1, by = 0.01)
+X1 = seq(min(set$volatile.acidity) - 1, max(set$volatile.acidity) + 1, by = 0.01)
 X2 = seq(min(set$alcohol) - 1, max(set$alcohol) + 1, by = 0.01)
-grid_set = expand.grid(X1, X2)
-colnames(grid_set) = c('chlorides', 'alcohol')
-y_grid = predict(classifier_svm, newdata = grid_set[, c('chlorides', 'alcohol')])
+
+grid_set = expand.grid(volatile.acidity = X1, alcohol = X2)
+grid_set$chlorides = mean(training_set$chlorides)
+grid_set$free.sulfur.dioxide = mean(training_set$free.sulfur.dioxide)
+grid_set$total.sulfur.dioxide = mean(training_set$total.sulfur.dioxide)
+grid_set$sulphates = mean(training_set$sulphates)
+
+# colnames(grid_set) = c('volatile.acidity', 'alcohol')
+y_grid = predict(classifier_svm, newdata = grid_set)
 plot(NULL,
      main = 'Kernel SVM (Test set)',
-     xlab = 'Chlorides (Scaled)', ylab = 'Alcohol (Scaled)',
+     xlab = 'Volatile Acidity (Scaled)', ylab = 'Alcohol (Scaled)',
      xlim = range(X1), ylim = range(X2))
 points(grid_set, pch = 20, col = c('tomato', 'springgreen3')[y_grid])
 points(set, pch = 21, bg = c('red3', 'green4')[set$quality])
