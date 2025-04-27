@@ -69,6 +69,65 @@ cm = confusionMatrix(y_pred, test_set$quality)
 print(cm$table)
 print(cm$overall['Accuracy'])
 
+
+# Visualizing the Training set results (Logistic Regression)
+set = training_set
+X1 = seq(min(set$volatile.acidity) - 0.1, max(set$volatile.acidity) + 0.1, by = 0.01)
+X2 = seq(min(set$alcohol) - 0.1, max(set$alcohol) + 0.1, by = 0.01)
+grid_set = expand.grid(volatile.acidity = X1, alcohol = X2)
+grid_set_full = data.frame(matrix(ncol = ncol(set), nrow = nrow(grid_set)))
+colnames(grid_set_full) = colnames(set)
+grid_set_full$volatile.acidity = grid_set$volatile.acidity
+grid_set_full$alcohol = grid_set$alcohol
+features_to_fill = setdiff(colnames(set), c("quality", "volatile.acidity", "alcohol"))
+for (feature in features_to_fill) {
+  grid_set_full[[feature]] = mean(set[[feature]])
+}
+prob_set = predict(classifier, type = 'response', newdata = grid_set_full)
+y_grid = as.factor(ifelse(prob_set > 0.5, 1, 0))
+
+plot(NULL,
+     main = 'Logistic Regression (Training set)',
+     xlab = 'Volatile Acidity (Scaled)', ylab = 'Alcohol (Scaled)',
+     xlim = range(X1), ylim = range(X2))
+points(grid_set, pch = 20, col = c('tomato', 'springgreen3')[as.numeric(y_grid)])
+points(set[, c("volatile.acidity", "alcohol")],
+       pch = 21, bg = c('red3', 'green4')[as.numeric(set$quality)])
+
+# Visualizing the Test set results (Logistic Regression)
+set = test_set
+X1 = seq(min(set$volatile.acidity) - 0.1, max(set$volatile.acidity) + 0.1, by = 0.01)
+X2 = seq(min(set$alcohol) - 0.1, max(set$alcohol) + 0.1, by = 0.01)
+grid_set = expand.grid(volatile.acidity = X1, alcohol = X2)
+grid_set_full = data.frame(matrix(ncol = ncol(set), nrow = nrow(grid_set)))
+colnames(grid_set_full) = colnames(set)
+grid_set_full$volatile.acidity = grid_set$volatile.acidity
+grid_set_full$alcohol = grid_set$alcohol
+features_to_fill = setdiff(colnames(set), c("quality", "volatile.acidity", "alcohol"))
+for (feature in features_to_fill) {
+  grid_set_full[[feature]] = mean(set[[feature]])
+}
+prob_set = predict(classifier, type = 'response', newdata = grid_set_full)
+y_grid = as.factor(ifelse(prob_set > 0.5, 1, 0))
+
+plot(NULL,
+     main = 'Logistic Regression (Test set)',
+     xlab = 'Volatile Acidity (Scaled)', ylab = 'Alcohol (Scaled)',
+     xlim = range(X1), ylim = range(X2))
+points(grid_set, pch = 20, col = c('tomato', 'springgreen3')[as.numeric(y_grid)])
+points(set[, c("volatile.acidity", "alcohol")],
+       pch = 21, bg = c('red3', 'green4')[as.numeric(set$quality)])
+
+
+
+
+
+
+
+
+
+
+
 ### KNN ###
 library(kknn)
 
